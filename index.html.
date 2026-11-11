@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HASHVERSE - Idle Mining</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080d12;color:#e9f5f1;
+ font-family:Arial,sans-serif;padding:20px;
+}
+.app{max-width:480px;margin:auto}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.logo{font-size:25px;font-weight:900;color:#43e6a1;letter-spacing:2px}
+.tag{font-size:11px;color:#82968e}
+.card{
+ background:#111c22;border:1px solid #263b3b;
+ border-radius:16px;padding:20px;margin-bottom:15px;
+}
+.label{font-size:11px;color:#8ba49a;letter-spacing:2px}
+.balance{font-size:38px;font-weight:bold;margin:12px 0;color:#48e6a3}
+.hash{font-size:14px;color:#9ab5aa}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:#17252a;padding:15px;border-radius:12px}
+.value{font-size:21px;font-weight:bold;margin-top:9px}
+.miner{
+ text-align:center;padding:30px 10px;
+ background:radial-gradient(circle,#163b34,#101a20 70%);
+ border-radius:16px;border:1px solid #28534a;
+}
+.machine{font-size:75px;margin:12px}
+.mining{color:#43e6a1;font-size:13px}
+button{
+ width:100%;border:0;border-radius:11px;padding:15px;
+ background:#39d99a;color:#07140e;font-size:15px;
+ font-weight:bold;margin-top:12px;cursor:pointer;
+}
+button:disabled{opacity:.5}
+.secondary{background:#20352f;color:#d9f9e9}
+.upgrade{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:10px;padding:14px 0;border-bottom:1px solid #263b3b;
+}
+.upgrade:last-child{border:0}
+.upgrade button{width:105px;margin:0;padding:12px 5px}
+small{color:#8ba49a}
+footer{text-align:center;color:#647b73;font-size:11px;padding:20px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+ <div>
+  <div class="logo">HASHVERSE</div>
+  <div class="tag">IDLE MINING UNIVERSE</div>
+ </div>
+ <div style="color:#43e6a1">● ONLINE</div>
+</header>
+
+<div class="card">
+ <div class="label">TOTAL HASH BALANCE</div>
+ <div class="balance" id="balance">0.000000</div>
+ <div class="hash">HASH COINS</div>
+</div>
+
+<div class="stats">
+ <div class="stat">
+  <div class="label">HASHRATE</div>
+  <div class="value" id="rate">1 H/s</div>
+ </div>
+ <div class="stat">
+  <div class="label">MINING POWER</div>
+  <div class="value" id="power">1</div>
+ </div>
+ <div class="stat">
+  <div class="label">MINED TODAY</div>
+  <div class="value" id="today">0.000000</div>
+ </div>
+ <div class="stat">
+  <div class="label">MINER LEVEL</div>
+  <div class="value" id="level">1</div>
+ </div>
+</div>
+
+<div class="card miner">
+ <div class="label">YOUR MINING MACHINE</div>
+ <div class="machine">⚙️</div>
+ <div class="mining">● MINING ACTIVE</div>
+ <p style="color:#9ab5aa;font-size:13px">
+  Your machine is generating HASH
+ </p>
+ <button class="secondary" onclick="boost()">
+  ⚡ CLAIM BONUS
+ </button>
+</div>
+
+<div class="card">
+ <div class="label">MINER UPGRADES</div>
+
+ <div class="upgrade">
+  <div>
+   <b>Basic Miner</b><br>
+   <small>+1 H/s power</small><br>
+   <small id="cost1">Cost: 10 HASH</small>
+  </div>
+  <button onclick="upgrade()">UPGRADE</button>
+ </div>
+
+ <div class="upgrade">
+  <div>
+   <b>Advanced Miner</b><br>
+   <small>+10 H/s power</small><br>
+   <small id="cost2">Cost: 100 HASH</small>
+  </div>
+  <button onclick="advanced()">BUY</button>
+ </div>
+</div>
+
+<div class="card">
+ <div class="label">MINING INFORMATION</div>
+ <p class="hash">Mining status: <b style="color:#43e6a1">ACTIVE</b></p>
+ <p class="hash">Mining speed: <span id="speed">1 HASH / second</span></p>
+ <p class="hash">Offline mining: ENABLED</p>
+ <p class="hash">Game version: 0.1.0</p>
+</div>
+
+<footer>HASHVERSE © 2026 | BUILD YOUR MINING EMPIRE</footer>
+</div>
+
+<script>
+const KEY="hashverse_v1";
+
+let data=JSON.parse(localStorage.getItem(KEY)) || {
+ balance:0,
+ power:1,
+ level:1,
+ cost1:10,
+ cost2:100,
+ last:Date.now(),
+ today:0,
+ day:new Date().toDateString(),
+ bonusDay:""
+};
+
+function save(){
+ data.last=Date.now();
+ localStorage.setItem(KEY,JSON.stringify(data));
+}
+
+function mining(){
+ const now=Date.now();
+ const elapsed=Math.max(0,(now-data.last)/1000);
+ const earned=elapsed*data.power;
+
+ // Offline mining maksimal 24 jam
+ const reward=Math.min(earned,data.power*86400);
+
+ data.balance+=reward;
+ data.today+=reward;
+ data.last=now;
+
+ if(data.day!==new Date().toDateString()){
+  data.day=new Date().toDateString();
+  data.today=0;
+ }
+ save();
+ render();
+}
+
+function upgrade(){
+ if(data.balance<data.cost1){
+  alert("HASH belum cukup!");
+  return;
+ }
+ data.balance-=data.cost1;
+ data.power+=1;
+ data.level++;
+ data.cost1=Math.ceil(data.cost1*1.6);
+ save();
+ render();
+}
+
+function advanced(){
+ if(data.balance<data.cost2){
+  alert("HASH belum cukup!");
+  return;
+ }
+ data.balance-=data.cost2;
+ data.power+=10;
+ data.level++;
+ data.cost2=Math.ceil(data.cost2*1.7);
+ save();
+ render();
+}
+
+function boost(){
+ if(data.bonusDay===new Date().toDateString()){
+  alert("Bonus harian sudah diklaim!");
+  return;
+ }
+ data.balance+=50;
+ data.bonusDay=new Date().toDateString();
+ save();
+ render();
+ alert("Bonus 50 HASH berhasil diklaim!");
+}
+
+function render(){
+ document.getElementById("balance").textContent=data.balance.toFixed(6);
+ document.getElementById("rate").textContent=data.power+" H/s";
+ document.getElementById("power").textContent=data.power;
+ document.getElementById("level").textContent=data.level;
+ document.getElementById("today").textContent=data.today.toFixed(4);
+ document.getElementById("cost1").textContent="Cost: "+data.cost1+" HASH";
+ document.getElementById("cost2").textContent="Cost: "+data.cost2+" HASH";
+ document.getElementById("speed").textContent=data.power+" HASH / second";
+}
+
+mining();
+setInterval(mining,1000);
+</script>
+</body>
+</html>
