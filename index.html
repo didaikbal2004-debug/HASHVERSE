@@ -1,226 +1,282 @@
-
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HASHVERSE - Idle Mining</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HASHVERSE | Pixel Mining Universe</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+:root{--bg:#090e16;--panel:#141f2b;--line:#304456;--green:#54f5a2;--gold:#ffd66b;--blue:#64d9ff;--red:#ff667a}
 *{box-sizing:border-box}
-body{
- margin:0;background:#080d12;color:#e9f5f1;
- font-family:Arial,sans-serif;padding:20px;
-}
-.app{max-width:480px;margin:auto}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
-.logo{font-size:25px;font-weight:900;color:#43e6a1;letter-spacing:2px}
-.tag{font-size:11px;color:#82968e}
-.card{
- background:#111c22;border:1px solid #263b3b;
- border-radius:16px;padding:20px;margin-bottom:15px;
-}
-.label{font-size:11px;color:#8ba49a;letter-spacing:2px}
-.balance{font-size:38px;font-weight:bold;margin:12px 0;color:#48e6a3}
-.hash{font-size:14px;color:#9ab5aa}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stat{background:#17252a;padding:15px;border-radius:12px}
-.value{font-size:21px;font-weight:bold;margin-top:9px}
-.miner{
- text-align:center;padding:30px 10px;
- background:radial-gradient(circle,#163b34,#101a20 70%);
- border-radius:16px;border:1px solid #28534a;
-}
-.machine{font-size:75px;margin:12px}
-.mining{color:#43e6a1;font-size:13px}
-button{
- width:100%;border:0;border-radius:11px;padding:15px;
- background:#39d99a;color:#07140e;font-size:15px;
- font-weight:bold;margin-top:12px;cursor:pointer;
-}
-button:disabled{opacity:.5}
-.secondary{background:#20352f;color:#d9f9e9}
-.upgrade{
- display:flex;justify-content:space-between;align-items:center;
- gap:10px;padding:14px 0;border-bottom:1px solid #263b3b;
-}
-.upgrade:last-child{border:0}
-.upgrade button{width:105px;margin:0;padding:12px 5px}
-small{color:#8ba49a}
-footer{text-align:center;color:#647b73;font-size:11px;padding:20px}
+body{margin:0;background:var(--bg);color:#e9f5ed;font-family:VT323,monospace;font-size:21px}
+button{font:inherit;cursor:pointer;color:inherit}
+#app{max-width:520px;margin:auto;min-height:100vh;padding:15px 14px 95px;background:linear-gradient(180deg,#101d2b,#090e16)}
+header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--line);padding:8px 0 15px}
+.logo{font:17px 'Press Start 2P';color:var(--green);line-height:1.8}
+.sub{font-size:17px;color:#90a7b7}
+.wallet{background:#1a2d35;border:2px solid #41665c;padding:7px 10px;color:var(--gold)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:15px 0}
+.stat,.panel{background:var(--panel);border:2px solid var(--line);padding:13px;box-shadow:3px 3px #05090e}
+.stat small,.muted{color:#9bb0bc}
+.stat strong{display:block;font-size:27px;color:var(--green);margin-top:4px}
+h2{font:12px 'Press Start 2P';color:var(--gold);line-height:1.8}
+h3{font-size:23px;margin:5px 0}
+button.action{background:#205d4b;border:2px solid var(--green);padding:11px;width:100%;color:#fff;margin-top:9px}
+button.action:active{transform:translate(2px,2px)}
+button:disabled{opacity:.35;cursor:not-allowed}
+button.secondary{background:#243849;border:2px solid #54758a;padding:9px;width:100%;margin-top:7px}
+.machine-room{background:#101c26;border:2px solid #406052;padding:13px;text-align:center;margin:12px 0}
+.room{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:15px 0}
+.rig{background:#1b3035;border:2px solid #41645b;padding:12px 3px;min-height:110px}
+.rig .art{font-size:37px;display:block}
+.rig small{font-size:16px;color:#9bb9ae}
+.pixel{font-family:'Press Start 2P';font-size:9px;line-height:2}
+.big{font-size:35px;color:var(--green)}
+.bar{height:12px;background:#263744;margin:8px 0}
+.bar span{display:block;height:100%;background:var(--green);width:100%}
+.tabs{position:fixed;bottom:0;left:0;right:0;max-width:520px;margin:auto;background:#101b28;border-top:2px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:9px 3px calc(9px + env(safe-area-inset-bottom));z-index:5}
+.tabs button{background:none;border:0;color:#9db3bf;font-size:17px}
+.tabs button.active{color:var(--green)}
+.page{display:none}
+.page.active{display:block}
+.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+.item button{width:110px;flex-shrink:0}
+.notice{color:var(--gold);font-size:17px;margin:8px 0}
+.arcade-box{text-align:center;background:#122c30;border:2px solid #477b69;padding:20px 12px;margin:12px 0}
+#target{font-size:65px;background:#244a3e;border:3px solid var(--green);width:110px;height:110px;margin:15px auto;display:grid;place-items:center}
+#target:active{transform:scale(.92)}
+footer{text-align:center;color:#617987;font-size:16px;padding:20px}
 </style>
 </head>
 <body>
-<div class="app">
-
+<div id="app">
 <header>
- <div>
-  <div class="logo">HASHVERSE</div>
-  <div class="tag">IDLE MINING UNIVERSE</div>
- </div>
- <div style="color:#43e6a1">● ONLINE</div>
+ <div><div class="logo">HASHVERSE</div><div class="sub">PIXEL MINING UNIVERSE</div></div>
+ <div class="wallet">◆ <span id="coins">0</span></div>
 </header>
 
-<div class="card">
- <div class="label">TOTAL HASH BALANCE</div>
- <div class="balance" id="balance">0.000000</div>
- <div class="hash">HASH COINS</div>
-</div>
-
 <div class="stats">
- <div class="stat">
-  <div class="label">HASHRATE</div>
-  <div class="value" id="rate">1 H/s</div>
- </div>
- <div class="stat">
-  <div class="label">MINING POWER</div>
-  <div class="value" id="power">1</div>
- </div>
- <div class="stat">
-  <div class="label">MINED TODAY</div>
-  <div class="value" id="today">0.000000</div>
- </div>
- <div class="stat">
-  <div class="label">MINER LEVEL</div>
-  <div class="value" id="level">1</div>
- </div>
+ <div class="stat">HASHRATE<strong id="rate">1 H/s</strong></div>
+ <div class="stat">MINER LEVEL<strong id="level">1</strong></div>
+ <div class="stat">ENERGY<strong id="energy">100/100</strong></div>
+ <div class="stat">TOTAL MINED<strong id="total">0</strong></div>
 </div>
 
-<div class="card miner">
- <div class="label">YOUR MINING MACHINE</div>
- <div class="machine">⚙️</div>
- <div class="mining">● MINING ACTIVE</div>
- <p style="color:#9ab5aa;font-size:13px">
-  Your machine is generating HASH
- </p>
- <button class="secondary" onclick="boost()">
-  ⚡ CLAIM BONUS
- </button>
-</div>
-
-<div class="card">
- <div class="label">MINER UPGRADES</div>
-
- <div class="upgrade">
-  <div>
-   <b>Basic Miner</b><br>
-   <small>+1 H/s power</small><br>
-   <small id="cost1">Cost: 10 HASH</small>
+<section id="farm" class="page active">
+ <div class="panel">
+  <h2>01 / YOUR MINING FARM</h2>
+  <div class="muted">Welcome, Miner!</div>
+  <div class="machine-room">
+   <div class="pixel" style="color:var(--green)">MINING FACILITY</div>
+   <div class="room" id="room">
+    <div class="rig"><span class="art">🖥️</span><small>GPU 01</small></div>
+    <div class="rig"><span class="art">⚙️</span><small>ASIC 01</small></div>
+    <div class="rig"><span class="art">💻</span><small>RIG 01</small></div>
+   </div>
+   <div class="big" id="farmrate">1 H/s</div>
+   <div class="muted">AUTOMATIC MINING ACTIVE</div>
   </div>
-  <button onclick="upgrade()">UPGRADE</button>
+  <h3>Mining progress</h3>
+  <div class="bar"><span></span></div>
+  <div class="muted">Your machines are generating HASH every second.</div>
+  <button class="action" onclick="mine()">⚡ TAP TO MINE +1 HASH</button>
+  <div class="notice" id="tapmsg">Tap to earn bonus HASH!</div>
  </div>
+ <div class="panel">
+  <h2>02 / MINING STATUS</h2>
+  <div class="item"><span>Passive income</span><b id="income">1/s</b></div>
+  <div class="item"><span>GPU installed</span><b id="gpus">0</b></div>
+  <div class="item"><span>ASIC installed</span><b id="asics">0</b></div>
+  <div class="item"><span>Offline mining</span><b style="color:var(--green)">ACTIVE</b></div>
+ </div>
+</section>
 
- <div class="upgrade">
-  <div>
-   <b>Advanced Miner</b><br>
-   <small>+10 H/s power</small><br>
-   <small id="cost2">Cost: 100 HASH</small>
+<section id="market" class="page">
+ <div class="panel">
+  <h2>03 / MINER MARKET</h2>
+  <p class="muted">Expand your mining empire.</p>
+  <div class="item"><div>🖥️ <b>Basic GPU</b><br><small>+2 H/s</small><br><small id="gpuprice">20 HASH</small></div><button class="action" onclick="buy('gpu')">BUY</button></div>
+  <div class="item"><div>⚙️ <b>ASIC Miner</b><br><small>+10 H/s</small><br><small id="asicprice">100 HASH</small></div><button class="action" onclick="buy('asic')">BUY</button></div>
+  <div class="item"><div>💎 <b>Quantum Rig</b><br><small>+50 H/s</small><br><small id="quantumprice">500 HASH</small></div><button class="action" onclick="buy('quantum')">BUY</button></div>
+ </div>
+ <div class="panel">
+  <h2>04 / POWER UP</h2>
+  <div class="item"><div>🚀 Overclock<br><small>+25% mining power</small></div><button class="action" onclick="overclock()">UPGRADE</button></div>
+  <div class="muted">Upgrade prices increase after every purchase.</div>
+ </div>
+</section>
+
+<section id="arcade" class="page">
+ <div class="panel">
+  <h2>05 / HASH ARCADE</h2>
+  <p class="muted">Play a quick mini-game and earn bonus HASH!</p>
+  <div class="arcade-box">
+   <div class="pixel">HASH RUSH</div>
+   <div class="big" id="timer">15</div>
+   <div class="muted">SECONDS REMAINING</div>
+   <div id="target">⚡</div>
+   <h3>Score: <span id="score">0</span></h3>
+   <button class="action" id="startgame" onclick="startGame()">START GAME</button>
+   <button class="secondary" id="hit" onclick="hit()" disabled>TAP THE ENERGY!</button>
   </div>
-  <button onclick="advanced()">BUY</button>
+  <div class="notice">Every successful tap scores 1 point. Earn 2 HASH per point when the round ends.</div>
  </div>
+</section>
+
+<section id="quest" class="page">
+ <div class="panel">
+  <h2>06 / DAILY QUESTS</h2>
+  <div class="item"><div>⛏️ Mine 50 HASH<br><small id="qmine">0 / 50</small></div><b id="q1">LOCKED</b></div>
+  <div class="item"><div>⚡ Play Hash Rush<br><small>Complete one round</small></div><b id="q2">LOCKED</b></div>
+  <div class="item"><div>🖥️ Buy a GPU<br><small>Own at least one GPU</small></div><b id="q3">LOCKED</b></div>
+  <div class="notice">Quest rewards are claimable once per day.</div>
+  <button class="action" onclick="claimQuest()">CLAIM DAILY REWARD: 50 HASH</button>
+ </div>
+ <div class="panel">
+  <h2>07 / ACHIEVEMENTS</h2>
+  <div class="item"><span>🌱 First 100 HASH</span><b id="ach1">0/100</b></div>
+  <div class="item"><span>🏭 First GPU</span><b id="ach2">LOCKED</b></div>
+  <div class="item"><span>⚡ Arcade Player</span><b id="ach3">LOCKED</b></div>
+ </div>
+</section>
+
+<footer>HASHVERSE PIXEL UNIVERSE • V0.2<br>SIMULATION GAME • 2026</footer>
 </div>
 
-<div class="card">
- <div class="label">MINING INFORMATION</div>
- <p class="hash">Mining status: <b style="color:#43e6a1">ACTIVE</b></p>
- <p class="hash">Mining speed: <span id="speed">1 HASH / second</span></p>
- <p class="hash">Offline mining: ENABLED</p>
- <p class="hash">Game version: 0.1.0</p>
-</div>
-
-<footer>HASHVERSE © 2026 | BUILD YOUR MINING EMPIRE</footer>
-</div>
+<nav class="tabs">
+ <button class="active" onclick="tab('farm',this)">🏭<br>FARM</button>
+ <button onclick="tab('market',this)">🛒<br>MARKET</button>
+ <button onclick="tab('arcade',this)">🕹️<br>ARCADE</button>
+ <button onclick="tab('quest',this)">📜<br>QUEST</button>
+</nav>
 
 <script>
-const KEY="hashverse_v1";
-
-let data=JSON.parse(localStorage.getItem(KEY)) || {
- balance:0,
- power:1,
- level:1,
- cost1:10,
- cost2:100,
- last:Date.now(),
- today:0,
- day:new Date().toDateString(),
- bonusDay:""
+const KEY="hashverse_pixel_v2";
+const defaults={
+ coins:0,rate:1,level:1,gpus:0,asics:0,quantums:0,
+ gpuprice:20,asicprice:100,quantumprice:500,
+ overclock:1,energy:100,total:0,today:0,
+ day:new Date().toDateString(),last:Date.now(),
+ bonusDay:"",arcadeDay:"",gpuQuest:false
 };
+let d=Object.assign({},defaults,JSON.parse(localStorage.getItem(KEY)||"{}"));
+let score=0,playing=false,seconds=15,gameTimer=null;
 
 function save(){
- data.last=Date.now();
- localStorage.setItem(KEY,JSON.stringify(data));
+ d.last=Date.now();
+ localStorage.setItem(KEY,JSON.stringify(d));
 }
-
-function mining(){
- const now=Date.now();
- const elapsed=Math.max(0,(now-data.last)/1000);
- const earned=elapsed*data.power;
-
- // Offline mining maksimal 24 jam
- const reward=Math.min(earned,data.power*86400);
-
- data.balance+=reward;
- data.today+=reward;
- data.last=now;
-
- if(data.day!==new Date().toDateString()){
-  data.day=new Date().toDateString();
-  data.today=0;
+function fmt(n){return n.toFixed(2)}
+function refresh(){
+ document.getElementById("coins").textContent=fmt(d.coins);
+ document.getElementById("rate").textContent=fmt(d.rate)+" H/s";
+ document.getElementById("farmrate").textContent=fmt(d.rate)+" H/s";
+ document.getElementById("level").textContent=d.level;
+ document.getElementById("energy").textContent=Math.floor(d.energy)+"/100";
+ document.getElementById("total").textContent=fmt(d.total);
+ document.getElementById("income").textContent=fmt(d.rate)+"/s";
+ document.getElementById("gpus").textContent=d.gpus;
+ document.getElementById("asics").textContent=d.asics;
+ document.getElementById("gpuprice").textContent=d.gpuprice+" HASH";
+ document.getElementById("asicprice").textContent=d.asicprice+" HASH";
+ document.getElementById("quantumprice").textContent=d.quantumprice+" HASH";
+ document.getElementById("qmine").textContent=Math.floor(d.today)+" / 50";
+ document.getElementById("q1").textContent=d.today>=50?"READY":"LOCKED";
+ document.getElementById("q2").textContent=d.arcadeDay===d.day?"READY":"LOCKED";
+ document.getElementById("q3").textContent=d.gpus>0?"READY":"LOCKED";
+ document.getElementById("ach1").textContent=Math.floor(d.total)+"/100";
+ document.getElementById("ach2").textContent=d.gpus>0?"UNLOCKED":"LOCKED";
+ document.getElementById("ach3").textContent=d.arcadeDay===d.day?"UNLOCKED":"LOCKED";
+ let room="";
+ for(let i=0;i<Math.min(6,d.gpus);i++)room+='<div class="rig"><span class="art">🖥️</span><small>GPU</small></div>';
+ for(let i=0;i<Math.min(6,d.asics);i++)room+='<div class="rig"><span class="art">⚙️</span><small>ASIC</small></div>';
+ for(let i=0;i<Math.min(6,d.quantums);i++)room+='<div class="rig"><span class="art">💎</span><small>QUANTUM</small></div>';
+ if(!room)room='<div class="rig"><span class="art">🖥️</span><small>STARTER</small></div>';
+ document.getElementById("room").innerHTML=room;
+}
+function add(n){
+ d.coins+=n;d.total+=n;d.today+=n;
+ save();refresh();
+}
+function mine(){
+ if(d.energy<1){document.getElementById("tapmsg").textContent="No energy! Wait for regeneration.";return}
+ d.energy-=1;
+ add(1);
+ document.getElementById("tapmsg").textContent="+1 HASH earned!";
+}
+function buy(type){
+ let price=d[type+"price"];
+ if(d.coins<price){alert("Not enough HASH!");return}
+ d.coins-=price;
+ if(type==="gpu"){d.gpus++;d.rate+=2;d.gpuprice=Math.ceil(d.gpuprice*1.5)}
+ if(type==="asic"){d.asics++;d.rate+=10;d.asicprice=Math.ceil(d.asicprice*1.6)}
+ if(type==="quantum"){d.quantums++;d.rate+=50;d.quantumprice=Math.ceil(d.quantumprice*1.7)}
+ d.level++;save();refresh();
+}
+function overclock(){
+ let price=200*d.level;
+ if(d.coins<price){alert("Need "+price+" HASH!");return}
+ d.coins-=price;d.rate*=1.25;d.level++;save();refresh();
+}
+function tab(id,button){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+ button.classList.add("active");
+}
+function startGame(){
+ if(playing)return;
+ playing=true;score=0;seconds=15;
+ document.getElementById("score").textContent=0;
+ document.getElementById("timer").textContent=seconds;
+ document.getElementById("startgame").disabled=true;
+ document.getElementById("hit").disabled=false;
+ gameTimer=setInterval(()=>{
+  seconds--;
+  document.getElementById("timer").textContent=seconds;
+  if(seconds<=0)endGame();
+ },1000);
+}
+function hit(){
+ if(!playing)return;
+ score++;
+ document.getElementById("score").textContent=score;
+ document.getElementById("target").textContent=["⚡","💎","🔷","✨"][Math.floor(Math.random()*4)];
+}
+function endGame(){
+ clearInterval(gameTimer);playing=false;
+ document.getElementById("hit").disabled=true;
+ document.getElementById("startgame").disabled=false;
+ let reward=score*2;
+ add(reward);
+ d.arcadeDay=d.day;save();refresh();
+ alert("HASH RUSH COMPLETE! Score: "+score+" | Reward: "+reward+" HASH");
+}
+function claimQuest(){
+ if(d.bonusDay===d.day){alert("Daily reward already claimed!");return}
+ if(d.today<50||d.arcadeDay!==d.day||d.gpus<1){
+  alert("Complete all 3 daily quests first!");return;
  }
- save();
- render();
+ d.bonusDay=d.day;add(50);save();
+ alert("Daily reward: 50 HASH!");
 }
-
-function upgrade(){
- if(data.balance<data.cost1){
-  alert("HASH belum cukup!");
-  return;
+function tick(){
+ let now=Date.now();
+ if(d.day!==new Date().toDateString()){
+  d.day=new Date().toDateString();d.today=0;
  }
- data.balance-=data.cost1;
- data.power+=1;
- data.level++;
- data.cost1=Math.ceil(data.cost1*1.6);
- save();
- render();
-}
-
-function advanced(){
- if(data.balance<data.cost2){
-  alert("HASH belum cukup!");
-  return;
+ let elapsed=Math.max(0,(now-d.last)/1000);
+ let offline=Math.min(elapsed,28800);
+ if(offline>0){
+  let reward=offline*d.rate*d.overclock;
+  d.coins+=reward;d.total+=reward;d.today+=reward;
  }
- data.balance-=data.cost2;
- data.power+=10;
- data.level++;
- data.cost2=Math.ceil(data.cost2*1.7);
- save();
- render();
+ d.last=now;
+ d.energy=Math.min(100,d.energy+elapsed/30);
+ save();refresh();
 }
-
-function boost(){
- if(data.bonusDay===new Date().toDateString()){
-  alert("Bonus harian sudah diklaim!");
-  return;
- }
- data.balance+=50;
- data.bonusDay=new Date().toDateString();
- save();
- render();
- alert("Bonus 50 HASH berhasil diklaim!");
-}
-
-function render(){
- document.getElementById("balance").textContent=data.balance.toFixed(6);
- document.getElementById("rate").textContent=data.power+" H/s";
- document.getElementById("power").textContent=data.power;
- document.getElementById("level").textContent=data.level;
- document.getElementById("today").textContent=data.today.toFixed(4);
- document.getElementById("cost1").textContent="Cost: "+data.cost1+" HASH";
- document.getElementById("cost2").textContent="Cost: "+data.cost2+" HASH";
- document.getElementById("speed").textContent=data.power+" HASH / second";
-}
-
-mining();
-setInterval(mining,1000);
+tick();
+setInterval(tick,1000);
 </script>
 </body>
 </html>
