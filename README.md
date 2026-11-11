@@ -1,0 +1,2 @@
+# HASHVERSE
+Idle Mining Game - HASHVERSE
